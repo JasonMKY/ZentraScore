@@ -1,0 +1,130 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+enum Plan {
+  FREE
+  CONSUMER
+  PROTOCOL
+  ANALYTICS
+}
+
+enum AlertType {
+  SCORE_CHANGE
+  LIQUIDATION_RISK
+  SCORE_EXPIRED
+  NEW_ELIGIBILITY
+  WEEKLY_DIGEST
+}
+
+model User {
+  id              String    @id @default(cuid())
+  clerkId         String    @unique
+  email           String    @unique
+  name            String?
+  plan            Plan      @default(FREE)
+  stripeCustomerId String?  @unique
+  stripeSubId     String?   @unique
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  wallets         Wallet[]
+  alerts          Alert[]
+  alertPrefs      AlertPrefs?
+
+  @@index([clerkId])
+}
+
+model Wallet {
+  id          String   @id @default(cuid())
+  address     String   // checksummed EIP-55
+  chain       String   @default("ethereum")
+  isPrimary   Boolean  @default(false)
+  label       String?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  addedAt     DateTime @default(now())
+
+  scores      ScoreHistory[]
+
+  @@unique([address, chain, userId])
+  @@index([userId])
+  @@index([address])
+}
+
+model ScoreCache {
+  address     String   @id // lowercase
+  score       Int
+  grade       String
+  factors     Json     // { repaymentHistory, liquidationRecord, walletAge, ... }
+  loanTerms   Json     // { maxLtvBps, interestRateBps, maxBorrowUsdc }
+  fraudFlags  String[] @default([])
+  rawData     Json?    // full Alchemy/Covalent response for debugging
+  computedAt  DateTime @default(now())
+  expiresAt   DateTime
+
+  @@index([expiresAt])
+}
+
+model ScoreHistory {
+  id          String   @id @default(cuid())
+  walletId    String
+  wallet      Wallet   @relation(fields: [walletId], references: [id], onDelete: Cascade)
+  score       Int
+  grade       String
+  delta       Int?     // change from previous score
+  keyEvent    String?  // human-readable reason for change
+  factors     Json
+  recordedAt  DateTime @default(now())
+
+  @@index([walletId, recordedAt])
+}
+
+model Alert {
+  id          String    @id @default(cuid())
+  userId      String
+  user        User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  type        AlertType
+  title       String
+  message     String
+  data        Json?     // extra structured data
+  read        Boolean   @default(false)
+  createdAt   DateTime  @default(now())
+
+  @@index([userId, read])
+  @@index([userId, createdAt])
+}
+
+model AlertPrefs {
+  id                  String  @id @default(cuid())
+  userId              String  @unique
+  user                User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  scoreChangeEnabled  Boolean @default(true)
+  scoreChangeDelta    Int     @default(20)  // notify if change >= this
+  liquidationEnabled  Boolean @default(true)
+  liquidationHF       Float   @default(1.3) // health factor threshold
+  weeklyDigestEnabled Boolean @default(false)
+  newEligibility      Boolean @default(true)
+}
+
+model WebhookEndpoint {
+  id          String   @id @default(cuid())
+  userId      String
+  url         String
+  secret      String   // HMAC secret for signature
+  events      String[] // ['score.updated', 'score.expired', ...]
+  addresses   String[] // monitored wallet addresses
+  threshold   Int?     // min score delta to trigger
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  lastFiredAt DateTime?
+
+  @@index([userId])
+}
