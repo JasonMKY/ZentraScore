@@ -1,5 +1,7 @@
 /**
- * Rasterize the ZentraScore mark to app/favicon.ico (32 + 16 PNG inside ICO).
+ * Rasterize the ZentraScore mark to:
+ * - app/favicon.ico (32 + 16 PNG inside ICO)
+ * - public/icon.png (32×32 PNG for browsers that prefer PNG favicons)
  * Run: npm run favicon
  */
 import fs from "node:fs";
@@ -9,7 +11,8 @@ import sharp from "sharp";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const root = path.join(__dirname, "..");
-const outPath = path.join(root, "app", "favicon.ico");
+const outIco = path.join(root, "app", "favicon.ico");
+const outPng = path.join(root, "public", "icon.png");
 
 /** Same design as the previous app/icon.svg */
 const SVG = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
@@ -68,5 +71,9 @@ const [png32, png16] = await Promise.all([
 ]);
 
 const ico = icoFromPngs([png32, png16]);
-fs.writeFileSync(outPath, ico);
-console.log("Wrote", path.relative(root, outPath), `(${ico.length} bytes)`);
+fs.mkdirSync(path.dirname(outPng), { recursive: true });
+fs.writeFileSync(outIco, ico);
+console.log("Wrote", path.relative(root, outIco), `(${ico.length} bytes)`);
+
+fs.writeFileSync(outPng, png32);
+console.log("Wrote", path.relative(root, outPng), `(${png32.length} bytes)`);

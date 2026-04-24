@@ -17,10 +17,24 @@ const dmMono = DM_Mono({
   variable: "--font-dm-mono",
 });
 
+/** Ensures metadata URLs (icons, OG) resolve correctly on Vercel and custom domains. */
+const metadataBaseUrl =
+  process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
+  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+  "https://zentrascore.io";
+
 export const metadata: Metadata = {
+  metadataBase: new URL(metadataBaseUrl),
   title: "ZentraScore — On-Chain Credit Intelligence",
   description:
     "The first credit score built entirely from blockchain data. Unlock undercollateralized lending, better rates, and higher limits.",
+  icons: {
+    icon: [
+      { url: "/icon.png", type: "image/png", sizes: "32x32" },
+      { url: "/favicon.ico", sizes: "any" },
+    ],
+    shortcut: "/favicon.ico",
+  },
   openGraph: {
     title: "ZentraScore",
     description: "On-chain credit scoring for DeFi",
