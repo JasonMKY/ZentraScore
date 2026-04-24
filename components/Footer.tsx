@@ -1,4 +1,5 @@
 import Link from "next/link";
+import BrandMarkIcon from "@/components/BrandMarkIcon";
 
 const footerCols = [
   {
@@ -39,14 +40,7 @@ export default function Footer() {
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 text-xl font-extrabold text-white mb-3.5">
-              <span className="flex h-[26px] w-[26px] items-center justify-center rounded-[7px] bg-cs-green">
-                <svg
-                  viewBox="0 0 14 14"
-                  className="h-[13px] w-[13px] fill-white"
-                >
-                  <path d="M7 0L14 3.5V10.5L7 14L0 10.5V3.5Z" />
-                </svg>
-              </span>
+              <BrandMarkIcon className="h-[26px] w-[26px] shrink-0" />
               <span>
                 Zentra<span className="text-cs-green">Score</span>
               </span>

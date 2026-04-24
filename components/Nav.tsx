@@ -11,6 +11,7 @@ import {
   UserButton,
   useUser,
 } from "@clerk/nextjs";
+import BrandMarkIcon from "@/components/BrandMarkIcon";
 
 type PlanId = "FREE" | "CONSUMER" | "PROTOCOL" | "ANALYTICS";
 
@@ -237,7 +238,8 @@ export default function Nav() {
         }`}
       >
         <div className="flex items-center justify-between px-6 py-5 border-b border-white/[.08]">
-          <span className="text-xl font-extrabold text-white">
+          <span className="flex items-center gap-2 text-xl font-extrabold text-white">
+            <BrandMarkIcon className="h-7 w-7 shrink-0" />
             Zentra<span className="text-cs-green">Score</span>
           </span>
           <button
