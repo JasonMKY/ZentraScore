@@ -6,9 +6,14 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-/** Next sets this while running `next build` (including on Vercel). */
+/** Next sets this while running `next build`. */
 function isNextProductionBuild(): boolean {
   return process.env.NEXT_PHASE === "phase-production-build";
+}
+
+/** Vercel / CI typically run `npm run build`, which sets this. */
+function isNpmBuildScript(): boolean {
+  return process.env.npm_lifecycle_event === "build";
 }
 
 /**
@@ -16,11 +21,11 @@ function isNextProductionBuild(): boolean {
  * .env.development → .env.development.local. A gitignored `.env.development`
  * with DATABASE_URL=localhost will override Supabase in `.env.local`.
  *
- * During `next build`, Next still imports API route modules to collect page data.
- * Vercel only injects env vars at runtime unless they are attached to the
- * "Build" environment too — so builds can run without DATABASE_URL. We use a
- * placeholder URL only for that phase; the client never connects until a query
- * runs. You must set DATABASE_URL (and DIRECT_URL for Prisma) for production.
+ * Prisma must not be constructed at **import** time: `next build` still loads
+ * API route modules ("collect page data"), and Vercel often does not expose
+ * DATABASE_URL during that phase unless you attach it to the Build environment.
+ * We lazy-init the client (see `getPrisma`) and only use a placeholder URL when
+ * the URL is still missing at first use during a detected build.
  */
 function databaseUrl(): string {
   const url = process.env["DATABASE_URL"]?.trim();
@@ -37,11 +42,10 @@ function databaseUrl(): string {
     return url;
   }
 
-  if (isNextProductionBuild()) {
+  if (isNextProductionBuild() || isNpmBuildScript()) {
     console.warn(
-      "[db] DATABASE_URL is unset during Next.js production build. Using a placeholder so the " +
-        "build can finish. Set DATABASE_URL (and DIRECT_URL) in Vercel → Settings → Environment " +
-        "Variables for Preview and Production, and enable them for **Build** if you need a real DB during build."
+      "[db] DATABASE_URL is unset during build. Using a placeholder URL so the build can finish. " +
+        "Set DATABASE_URL and DIRECT_URL in Vercel → Settings → Environment Variables for runtime."
     );
     return "postgresql://build:build@127.0.0.1:5432/build?schema=public";
   }
@@ -53,16 +57,34 @@ function databaseUrl(): string {
   );
 }
 
-export const db =
-  globalForPrisma.prisma ??
-  new PrismaClient({
+function createPrismaClient(): PrismaClient {
+  return new PrismaClient({
     datasources: { db: { url: databaseUrl() } },
     log:
       process.env.NODE_ENV === "development"
         ? ["query", "error", "warn"]
         : ["error"],
   });
-
-if (process.env.NODE_ENV !== "production") {
-  globalForPrisma.prisma = db;
 }
+
+function getPrisma(): PrismaClient {
+  if (!globalForPrisma.prisma) {
+    globalForPrisma.prisma = createPrismaClient();
+  }
+  return globalForPrisma.prisma;
+}
+
+/**
+ * Lazy Prisma proxy: importing `@/lib/db` does not touch `DATABASE_URL` until
+ * the first query. That avoids Vercel build failures when env is build-time empty.
+ */
+export const db: PrismaClient = new Proxy({} as PrismaClient, {
+  get(_target, prop, receiver) {
+    const client = getPrisma();
+    const value = Reflect.get(client, prop, receiver) as unknown;
+    if (typeof value === "function") {
+      return (value as (...a: unknown[]) => unknown).bind(client);
+    }
+    return value;
+  },
+}) as PrismaClient;
