@@ -89,11 +89,7 @@ export default function Nav() {
           href="/"
           className="flex items-center gap-2 text-xl font-extrabold tracking-tight select-none"
         >
-          <span className="flex h-7 w-7 items-center justify-center rounded-lg bg-cs-green">
-            <svg viewBox="0 0 14 14" className="h-3.5 w-3.5 fill-white">
-              <path d="M7 0L14 3.5V10.5L7 14L0 10.5V3.5Z" />
-            </svg>
-          </span>
+          <BrandMarkIcon className="h-7 w-7 shrink-0 block" />
           <span className={isDark ? "text-white" : "text-cs-ink"}>
             Zentra<span className="text-cs-green">Score</span>
           </span>
@@ -239,7 +235,7 @@ export default function Nav() {
       >
         <div className="flex items-center justify-between px-6 py-5 border-b border-white/[.08]">
           <span className="flex items-center gap-2 text-xl font-extrabold text-white">
-            <BrandMarkIcon className="h-7 w-7 shrink-0" />
+            <BrandMarkIcon className="h-7 w-7 shrink-0 block" />
             Zentra<span className="text-cs-green">Score</span>
           </span>
           <button
