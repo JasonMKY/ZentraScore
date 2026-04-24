@@ -28,6 +28,7 @@ export default function Nav() {
   const isDashboard = pathname.startsWith("/dashboard");
   const isPricing = pathname.startsWith("/pricing");
   const isContact = pathname.startsWith("/contact");
+  const isDocs = pathname.startsWith("/docs");
   const [scrolled, setScrolled] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const { user: clerkUser, isSignedIn } = useUser();
@@ -139,7 +140,11 @@ export default function Nav() {
               </li>
             </>
           )}
-          {!isAuthPage && !isDashboard && !isPricing && !isContact && (
+          {!isAuthPage &&
+            !isDashboard &&
+            !isPricing &&
+            !isContact &&
+            !isDocs && (
             <li>
               <Link
                 href="/docs"
@@ -247,7 +252,7 @@ export default function Nav() {
             { label: "On-chain Scoring", href: "/#on-chain-scoring" },
             { label: "Features", href: "/#features" },
             { label: "Pricing", href: "/pricing" },
-            ...(isDashboard || isPricing || isContact
+            ...(isDashboard || isPricing || isContact || isDocs
               ? []
               : [{ label: "API Docs", href: "/docs" }]),
           ].map((item) => (

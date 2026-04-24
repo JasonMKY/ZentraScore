@@ -41,7 +41,7 @@ const plans: {
     tagColor: "#00c98d",
     name: "Protocol API",
     desc: "For DeFi protocols integrating credit scoring into their lending or risk infrastructure.",
-    price: "$499",
+    price: "$299",
     period: "/ month + $0.10 per query",
     feats: [
       "REST API + on-chain oracle",
@@ -62,7 +62,7 @@ const plans: {
     tagColor: "#bbb",
     name: "Risk Analytics",
     desc: "For funds, DAOs, and research teams needing portfolio-level credit risk intelligence.",
-    price: "$299",
+    price: "$499",
     period: "per month",
     feats: [
       "Portfolio risk dashboard",

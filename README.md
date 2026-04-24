@@ -52,7 +52,7 @@ Open `.env.local` and fill in each value. Instructions per service:
 - Sign up → Get API Key (free tier: 100 req/day)
 
 **Stripe** → [dashboard.stripe.com](https://dashboard.stripe.com)
-- Create 3 products: Consumer ($9/mo), Protocol API ($499/mo), Analytics ($299/mo)
+- Create 3 products: Consumer ($9/mo), Protocol API ($299/mo), Analytics ($499/mo)
 - Copy the Price IDs for each product
 - Copy your publishable and secret keys
 - Run `stripe listen --forward-to localhost:3000/api/webhooks/stripe` for local webhook testing

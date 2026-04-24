@@ -51,6 +51,6 @@ export const PLAN_META: Record<
 > = {
   FREE: { label: "Free", price: "$0", blurb: "Starter features" },
   CONSUMER: { label: "Consumer", price: "$9 / month", blurb: "For individuals" },
-  PROTOCOL: { label: "Protocol API", price: "$499 / month", blurb: "For teams & protocols" },
-  ANALYTICS: { label: "Analytics", price: "$299 / month", blurb: "Bulk scoring & exports" },
+  PROTOCOL: { label: "Protocol API", price: "$299 / month", blurb: "For teams & protocols" },
+  ANALYTICS: { label: "Analytics", price: "$499 / month", blurb: "Bulk scoring & exports" },
 };
