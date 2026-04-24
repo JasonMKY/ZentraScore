@@ -1,9 +1,9 @@
 import { authMiddleware } from "@clerk/nextjs/server";
 
 /**
- * `clerkMiddleware` pulls in Node-only `AsyncLocalStorage` and can fail on Vercel Edge with
- * `MIDDLEWARE_INVOCATION_FAILED`. `authMiddleware` stays Edge-safe and still wires Clerk so
- * `auth()` works in routes and RSC.
+ * Clerk's default `clerkMiddleware` module imports `node:async_hooks`, which breaks Edge.
+ * `next.config.js` replaces that module with `lib/clerk-middleware-edge-shim.ts` so this
+ * `authMiddleware` bundle stays Edge-safe while `auth()` still receives Clerk headers.
  *
  * Only `/dashboard` and `/api/checkout` require a signed-in user; everything else is public
  * for middleware purposes (individual API handlers may still return 401).
