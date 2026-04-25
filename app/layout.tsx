@@ -18,9 +18,18 @@ const dmMono = DM_Mono({
 });
 
 /** Ensures metadata URLs (icons, OG) resolve correctly on Vercel and custom domains. */
+const normalizeBaseUrl = (value?: string | null) => {
+  const trimmed = value?.trim();
+  if (!trimmed) return null;
+  const withProtocol = /^https?:\/\//i.test(trimmed)
+    ? trimmed
+    : `https://${trimmed}`;
+  return withProtocol.replace(/\/$/, "");
+};
+
 const metadataBaseUrl =
-  process.env.NEXT_PUBLIC_APP_URL?.replace(/\/$/, "") ||
-  (process.env.VERCEL_URL ? `https://${process.env.VERCEL_URL}` : null) ||
+  normalizeBaseUrl(process.env.NEXT_PUBLIC_APP_URL) ||
+  normalizeBaseUrl(process.env.VERCEL_URL) ||
   "https://zentrascore.io";
 
 export const metadata: Metadata = {
