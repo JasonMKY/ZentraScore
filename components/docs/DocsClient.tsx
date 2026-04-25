@@ -33,7 +33,7 @@ const sidebarGroups: { label: string; items: SidebarItem[] }[] = [
     items: [
       { id: "d-wh-create", text: "Create webhook", method: "POST" },
       { id: "d-wh-list", text: "List webhooks", method: "GET" },
-      { id: "d-wh-del", text: "Delete webhook", method: "DEL" },
+      { id: "d-wh-del", text: "Delete webhook", method: "DELETE" },
     ],
   },
   {
@@ -472,7 +472,7 @@ console.log(result.score); <span class="cm">// 734</span>`}
                 API Keys
               </h2>
               <p className="text-sm text-cs-ink2 leading-[1.75] max-w-[640px] mb-5">
-                All API requests require a Bearer token in the{" "}
+                Most API endpoints require a Bearer token in the{" "}
                 <code className="font-mono bg-[#f3f5f3] px-1.5 py-px rounded text-xs text-cs-green-x">
                   Authorization
                 </code>{" "}
@@ -485,6 +485,13 @@ console.log(result.score); <span class="cm">// 734</span>`}
                   cs_test_
                 </code>{" "}
                 for sandbox.
+              </p>
+              <p className="text-[13px] text-cs-ink3 leading-[1.65] mb-5">
+                Generate and manage API keys from{" "}
+                <code className="font-mono bg-[#f3f5f3] px-1.5 py-px rounded text-xs text-cs-green-x">
+                  /api/api-keys
+                </code>{" "}
+                (Protocol API and Risk Analytics plans).
               </p>
               <div className="flex gap-2.5 p-3.5 rounded-cs border border-[rgba(255,107,43,.2)] bg-[rgba(255,107,43,.05)] text-[13px] text-cs-ink2 leading-[1.6] mb-5">
                 <span>⚠</span>

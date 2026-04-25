@@ -48,6 +48,10 @@ const BillingTab = dynamic(() => import("./tabs/BillingTab"), {
   ssr: false,
   loading: TabFallback,
 });
+const APIKeysTab = dynamic(() => import("./tabs/APIKeysTab"), {
+  ssr: false,
+  loading: TabFallback,
+});
 
 interface DashboardUser {
   id: string;
@@ -146,6 +150,7 @@ const TABS = [
   { id: "loans", icon: "💰", label: "My Loans", section: "Lending" },
   { id: "eligibility", icon: "✅", label: "Eligibility", section: "Lending" },
   { id: "wallets", icon: "🔑", label: "Wallets", section: "Settings" },
+  { id: "api-keys", icon: "🗝️", label: "API Keys", section: "Settings" },
   { id: "billing", icon: "💳", label: "Billing", section: "Settings" },
 ];
 
@@ -361,6 +366,7 @@ export default function DashboardClient({
             {tab === "billing" && (
               <BillingTab plan={serverUser.plan} email={serverUser.email} />
             )}
+            {tab === "api-keys" && <APIKeysTab plan={serverUser.plan} />}
           </div>
         </div>
       </div>

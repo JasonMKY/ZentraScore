@@ -38,8 +38,25 @@ model User {
   wallets         Wallet[]
   alerts          Alert[]
   alertPrefs      AlertPrefs?
+  apiKeys         ApiKey[]
 
   @@index([clerkId])
+}
+
+model ApiKey {
+  id          String   @id @default(cuid())
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String?
+  keyPrefix   String   @unique
+  keyHash     String   @unique
+  active      Boolean  @default(true)
+  lastUsedAt  DateTime?
+  revokedAt   DateTime?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([userId, active])
 }
 
 model Wallet {

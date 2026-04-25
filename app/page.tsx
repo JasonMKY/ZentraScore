@@ -113,7 +113,7 @@ const pricingPlans = [
       "Batch scoring up to 50k/day",
       "99.9% SLA with status page",
       "Custom weight configuration",
-      "Dedicated Slack support",
+      "Dedicated support",
     ],
     btnClass:
       "bg-cs-green text-white hover:bg-cs-green-d hover:-translate-y-px hover:shadow-[0_6px_20px_rgba(0,201,141,.35)]",

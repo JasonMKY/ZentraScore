@@ -1,12 +1,11 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getCachedScore, setCachedScore, checkRateLimit } from "@/lib/cache";
 import { fetchWalletData } from "@/lib/scoring/fetcher";
 import { meetsHardGates, runScoringPipeline } from "@/lib/scoring/engine";
-import { db } from "@/lib/db";
 import { PLAN_LIMITS } from "@/types";
 import type { SubscriptionPlan } from "@/types";
+import { resolveRequestPrincipal } from "@/lib/requestAuth";
 
 const bodySchema = z.object({
   addresses: z
@@ -17,20 +16,14 @@ const bodySchema = z.object({
 });
 
 export async function POST(req: NextRequest) {
-  const { userId } = await auth();
-  if (!userId) {
+  const principal = await resolveRequestPrincipal(req);
+  if (!principal) {
     return NextResponse.json(
       { error: "unauthorized", message: "API key required for batch scoring" },
       { status: 401 }
     );
   }
-
-  const user = await db.user.findUnique({
-    where: { clerkId: userId },
-    select: { plan: true },
-  });
-
-  const plan = (user?.plan ?? "FREE") as SubscriptionPlan;
+  const plan = principal.plan as SubscriptionPlan;
   const limits = PLAN_LIMITS[plan];
 
   if (limits.batchSize === 0) {
@@ -45,7 +38,7 @@ export async function POST(req: NextRequest) {
 
   // Per-user rate limit for batch endpoint (3× single-score limit)
   const rateLimit = await checkRateLimit(
-    `batch:${userId}`,
+    `batch:${principal.source}:${principal.userId}`,
     Math.max(limits.requestsPerMin * 3, 10)
   );
   if (!rateLimit.allowed) {

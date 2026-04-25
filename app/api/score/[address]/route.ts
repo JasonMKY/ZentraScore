@@ -1,4 +1,3 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { getCachedScore, checkRateLimit } from "@/lib/cache";
@@ -7,6 +6,7 @@ import { dispatchScoreUpdate } from "@/lib/webhooks/dispatcher";
 import { db } from "@/lib/db";
 import { PLAN_LIMITS } from "@/types";
 import type { SubscriptionPlan } from "@/types";
+import { resolveRequestPrincipal } from "@/lib/requestAuth";
 
 const paramsSchema = z.object({
   address: z
@@ -26,6 +26,10 @@ const querySchema = z.object({
       if (!v?.trim()) return undefined;
       return v.split(",").map((s) => s.trim().toLowerCase()).filter(Boolean);
     }),
+  include_history: z
+    .string()
+    .optional()
+    .transform((v) => v === "true"),
 });
 
 export async function GET(
@@ -45,25 +49,32 @@ export async function GET(
   const queryParse = querySchema.safeParse({
     fresh: url.searchParams.get("fresh"),
     chains: url.searchParams.get("chains"),
+    include_history: url.searchParams.get("include_history"),
   });
-  const { fresh, chains: chainsParam } = queryParse.success
+  const { fresh, chains: chainsParam, include_history } = queryParse.success
     ? queryParse.data
-    : { fresh: false, chains: undefined as string[] | undefined };
+    : {
+        fresh: false,
+        chains: undefined as string[] | undefined,
+        include_history: false,
+      };
 
-  const { userId } = await auth();
+  const principal = await resolveRequestPrincipal(req);
   let plan: SubscriptionPlan = "FREE";
   let dbUser: { id: string; plan: string } | null = null;
 
-  if (userId) {
+  if (principal) {
+    plan = principal.plan as SubscriptionPlan;
     dbUser = await db.user.findUnique({
-      where: { clerkId: userId },
+      where: { id: principal.userId },
       select: { id: true, plan: true },
     });
-    if (dbUser) plan = dbUser.plan as SubscriptionPlan;
   }
 
   const limits = PLAN_LIMITS[plan];
-  const rateLimitKey = userId ?? req.ip ?? "anonymous";
+  const rateLimitKey = principal
+    ? `${principal.source}:${principal.userId}`
+    : req.ip ?? "anonymous";
   const rateLimit = await checkRateLimit(rateLimitKey, limits.requestsPerMin);
 
   if (!rateLimit.allowed) {
@@ -87,7 +98,11 @@ export async function GET(
   if (!fresh) {
     const cached = await getCachedScore(address);
     if (cached) {
-      return NextResponse.json(cached, {
+      const response: Record<string, unknown> = { ...cached };
+      if (include_history) {
+        response.history = await loadAddressHistory(address, 12);
+      }
+      return NextResponse.json(response, {
         headers: {
           "X-Score-Source": "cache",
           "Cache-Control": "public, s-maxage=3600",
@@ -97,7 +112,7 @@ export async function GET(
   }
 
   let wallet: { id: string } | null = null;
-  if (userId && dbUser) {
+  if (dbUser) {
     wallet = await db.wallet.findFirst({
       where: { address: address.toLowerCase(), userId: dbUser.id },
       select: { id: true },
@@ -127,8 +142,15 @@ export async function GET(
       );
     }
 
+    const response: Record<string, unknown> = {
+      ...result,
+      fromCache: false,
+    };
+    if (include_history) {
+      response.history = await loadAddressHistory(address, 12);
+    }
     return NextResponse.json(
-      { ...result, fromCache: false },
+      response,
       {
         headers: {
           "X-Score-Source": "computed",
@@ -168,4 +190,26 @@ export async function GET(
       { status: 503 }
     );
   }
+}
+
+async function loadAddressHistory(address: string, months: number) {
+  const since = new Date();
+  since.setMonth(since.getMonth() - months);
+
+  const history = await db.scoreHistory.findMany({
+    where: {
+      wallet: { address: address.toLowerCase() },
+      recordedAt: { gte: since },
+    },
+    orderBy: { recordedAt: "asc" },
+  });
+
+  return history.map((record, i) => ({
+    score: record.score,
+    grade: record.grade,
+    factors: record.factors,
+    keyEvent: record.keyEvent,
+    delta: i > 0 ? record.score - history[i - 1].score : null,
+    recordedAt: record.recordedAt.toISOString(),
+  }));
 }

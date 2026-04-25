@@ -1,7 +1,7 @@
-import { auth } from "@clerk/nextjs/server";
 import { NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
 import { db } from "@/lib/db";
+import { resolveRequestPrincipal } from "@/lib/requestAuth";
 
 const paramsSchema = z.object({
   address: z
@@ -13,8 +13,8 @@ export async function GET(
   req: NextRequest,
   { params }: { params: { address: string } }
 ) {
-  const { userId } = await auth();
-  if (!userId) {
+  const principal = await resolveRequestPrincipal(req);
+  if (!principal) {
     return NextResponse.json({ error: "unauthorized" }, { status: 401 });
   }
 
@@ -26,21 +26,6 @@ export async function GET(
     );
   }
 
-  const user = await db.user.findUnique({
-    where: { clerkId: userId },
-    include: {
-      wallets: { where: { address: addrParse.data.address.toLowerCase() } },
-    },
-  });
-
-  if (!user || user.wallets.length === 0) {
-    return NextResponse.json(
-      { error: "wallet_not_found", message: "Wallet not linked to your account." },
-      { status: 404 }
-    );
-  }
-
-  const wallet = user.wallets[0];
   const url = new URL(req.url);
   const rawMonths = parseInt(url.searchParams.get("months") ?? "12", 10);
   const months = Math.min(Number.isNaN(rawMonths) ? 12 : Math.max(1, rawMonths), 24);
@@ -50,7 +35,7 @@ export async function GET(
 
   const history = await db.scoreHistory.findMany({
     where: {
-      walletId: wallet.id,
+      wallet: { address: addrParse.data.address.toLowerCase() },
       recordedAt: { gte: since },
     },
     orderBy: { recordedAt: "asc" },
