@@ -4,6 +4,52 @@ import { NextRequest, NextResponse } from "next/server";
 import { Webhook } from "svix";
 import { db } from "@/lib/db";
 
+async function upsertUserFromClerkEvent(params: {
+  clerkId: string;
+  email: string;
+  name: string | null;
+}) {
+  const { clerkId, email, name } = params;
+
+  const existingByClerk = await db.user.findUnique({
+    where: { clerkId },
+    select: { id: true },
+  });
+  if (existingByClerk) {
+    await db.user.update({
+      where: { id: existingByClerk.id },
+      data: { email, name },
+    });
+    return;
+  }
+
+  const existingByEmail = await db.user.findUnique({
+    where: { email },
+    select: { id: true },
+  });
+  if (existingByEmail) {
+    await db.user.update({
+      where: { id: existingByEmail.id },
+      data: { clerkId, email, name },
+    });
+    await db.alertPrefs.upsert({
+      where: { userId: existingByEmail.id },
+      create: { userId: existingByEmail.id },
+      update: {},
+    });
+    return;
+  }
+
+  await db.user.create({
+    data: {
+      clerkId,
+      email,
+      name,
+      alertPrefs: { create: {} },
+    },
+  });
+}
+
 export async function POST(req: NextRequest) {
   const body = await req.text();
   const svixId = req.headers.get("svix-id")!;
@@ -38,15 +84,10 @@ export async function POST(req: NextRequest) {
       const email = email_addresses?.[0]?.email_address;
       if (!email) break;
 
-      await db.user.upsert({
-        where: { clerkId: id },
-        create: {
-          clerkId: id,
-          email,
-          name: [first_name, last_name].filter(Boolean).join(" ") || null,
-          alertPrefs: { create: {} }, // create default alert prefs
-        },
-        update: { email, name: [first_name, last_name].filter(Boolean).join(" ") || null },
+      await upsertUserFromClerkEvent({
+        clerkId: id,
+        email,
+        name: [first_name, last_name].filter(Boolean).join(" ") || null,
       });
       console.log(`[clerk-webhook] User created: ${email}`);
       break;
@@ -57,12 +98,10 @@ export async function POST(req: NextRequest) {
       const email = email_addresses?.[0]?.email_address;
       if (!email) break;
 
-      await db.user.update({
-        where: { clerkId: id },
-        data: {
-          email,
-          name: [first_name, last_name].filter(Boolean).join(" ") || null,
-        },
+      await upsertUserFromClerkEvent({
+        clerkId: id,
+        email,
+        name: [first_name, last_name].filter(Boolean).join(" ") || null,
       });
       break;
     }

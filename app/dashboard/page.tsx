@@ -42,19 +42,66 @@ export default async function DashboardPage({
   if (!user) {
     const email =
       clerkUser?.emailAddresses[0]?.emailAddress ?? `${userId}@unknown.com`;
-    user = await db.user.create({
-      data: {
-        clerkId: userId,
-        email,
-        name: clerkUser?.fullName ?? null,
-        alertPrefs: { create: {} },
-      },
+    const existingByEmail = await db.user.findUnique({
+      where: { email },
       include: {
         wallets: { orderBy: { addedAt: "asc" } },
         alerts: { where: { read: false }, orderBy: { createdAt: "desc" }, take: 10 },
         alertPrefs: true,
       },
     });
+
+    if (existingByEmail) {
+      user = await db.user.update({
+        where: { id: existingByEmail.id },
+        data: {
+          clerkId: userId,
+          name: clerkUser?.fullName ?? existingByEmail.name ?? null,
+        },
+        include: {
+          wallets: { orderBy: { addedAt: "asc" } },
+          alerts: {
+            where: { read: false },
+            orderBy: { createdAt: "desc" },
+            take: 10,
+          },
+          alertPrefs: true,
+        },
+      });
+      if (!user.alertPrefs) {
+        await db.alertPrefs.create({ data: { userId: user.id } });
+        user = await db.user.findUnique({
+          where: { id: user.id },
+          include: {
+            wallets: { orderBy: { addedAt: "asc" } },
+            alerts: {
+              where: { read: false },
+              orderBy: { createdAt: "desc" },
+              take: 10,
+            },
+            alertPrefs: true,
+          },
+        });
+      }
+    } else {
+      user = await db.user.create({
+        data: {
+          clerkId: userId,
+          email,
+          name: clerkUser?.fullName ?? null,
+          alertPrefs: { create: {} },
+        },
+        include: {
+          wallets: { orderBy: { addedAt: "asc" } },
+          alerts: { where: { read: false }, orderBy: { createdAt: "desc" }, take: 10 },
+          alertPrefs: true,
+        },
+      });
+    }
+  }
+
+  if (!user) {
+    redirect("/sign-in");
   }
 
   const primaryWallet = user.wallets.find((w) => w.isPrimary) ?? user.wallets[0];
