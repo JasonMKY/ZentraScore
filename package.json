@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "prisma generate && next build",
     "start": "next start",
     "lint": "next lint",
     "db:push": "prisma db push",
@@ -13,7 +13,8 @@
     "db:generate": "prisma generate",
     "db:studio": "prisma studio",
     "db:seed": "tsx prisma/seed.ts",
-    "favicon": "node scripts/gen-favicon.mjs"
+    "favicon": "node scripts/gen-favicon.mjs",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@clerk/nextjs": "^5.7.6",

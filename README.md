@@ -40,6 +40,7 @@ Open `.env.local` and fill in each value. Instructions per service:
 - Create a new application
 - Enable "Web3 / Ethereum" as an authentication method
 - Copy publishable key and secret key
+- Set a stable `CLERK_ENCRYPTION_KEY` (32+ random chars) in each environment
 - Go to Webhooks → Add endpoint → `https://your-domain/api/webhooks/clerk`
 - Add the `CLERK_WEBHOOK_SECRET` to `.env.local`
 
@@ -197,6 +198,10 @@ vercel
 ```
 
 Add all env vars in the Vercel dashboard under Settings → Environment Variables.
+
+Important for this project:
+- Set `CLERK_ENCRYPTION_KEY` (stable random string) to avoid Clerk middleware warning.
+- Build command should run Prisma generation (`prisma generate`) before `next build` (already configured in `package.json`).
 
 Set these Stripe and Clerk webhook URLs in their respective dashboards:
 - Stripe: `https://your-domain.vercel.app/api/webhooks/stripe`
