@@ -1,7 +1,25 @@
+import type { Metadata } from "next";
 import Link from "next/link";
 import Footer from "@/components/Footer";
 import ScrollReveal from "@/components/ScrollReveal";
 import HeroLookup from "@/components/HeroLookup";
+
+export const metadata: Metadata = {
+  title: {
+    absolute:
+      "ZentraScore — Crypto Credit Score for DeFi & On-Chain Lending",
+  },
+  description:
+    "ZentraScore is the leading crypto credit score for DeFi. Get an on-chain, blockchain-verified cryptocurrency credit score to unlock undercollateralized lending, lower rates, and higher limits.",
+  alternates: { canonical: "/" },
+  openGraph: {
+    title: "ZentraScore — Crypto Credit Score for DeFi",
+    description:
+      "The first on-chain credit scoring infrastructure for DeFi. A crypto credit score built from every borrow, repayment, and liquidation across 18+ protocols.",
+    url: "/",
+    type: "website",
+  },
+};
 
 /* ═══════════════════════════════════════════════════════
    DATA
@@ -150,6 +168,85 @@ const factors = [
   { name: "Stability", pct: 48, w: "5%", color: "#e53e3e" },
 ];
 
+const faqs = [
+  {
+    q: "What is a crypto credit score?",
+    a: "A crypto credit score is a credit rating computed entirely from on-chain activity — borrows, repayments, liquidations, asset diversity, and wallet age. Unlike a traditional credit score, a crypto credit score is permissionless, transparent, and verifiable on the blockchain. ZentraScore produces a cryptocurrency credit score between 300 and 850 so DeFi protocols can price risk without KYC or bank data.",
+  },
+  {
+    q: "How is a cryptocurrency credit score calculated?",
+    a: "ZentraScore indexes every borrow, repayment, and liquidation across 18+ DeFi protocols on Ethereum, Arbitrum, Base, Avalanche, and Unichain. Six weighted factors — repayment history (35%), liquidation record (20%), wallet age (15%), asset diversity (15%), protocol breadth (10%), and stability (5%) — combine into a single 300–850 credit score with Sybil detection and wash-repayment checks applied before publication.",
+  },
+  {
+    q: "Is a blockchain credit score the same as a traditional credit score?",
+    a: "No. A blockchain credit score uses only public on-chain data, so there's no reliance on banks, bureaus, or SSNs. A traditional FICO credit score measures fiat borrowing; a crypto credit score measures DeFi behavior. The two can coexist — the ZentraScore on-chain credit score is designed for lending protocols, dApps, and undercollateralized lending where traditional credit data isn't available.",
+  },
+  {
+    q: "Does my on-chain credit score affect my real-world credit?",
+    a: "No. Your ZentraScore crypto credit score is separate from any traditional credit bureau and does not impact your FICO, Equifax, Experian, or TransUnion score. It only reflects your on-chain DeFi activity and is used by DeFi protocols, not traditional lenders.",
+  },
+  {
+    q: "How do DeFi protocols use my crypto credit score?",
+    a: "Lending protocols read the ZentraScore on-chain credit score via our smart-contract oracle to determine loan-to-value ratios, interest rates, and borrow limits. A higher cryptocurrency credit score unlocks undercollateralized loans, better APRs, and higher caps — the same way a high credit score unlocks a better mortgage in traditional finance.",
+  },
+  {
+    q: "How do I improve my crypto credit score?",
+    a: "Repay loans on time, avoid liquidations, keep a diverse portfolio, and maintain activity across multiple reputable DeFi protocols. ZentraScore surfaces personalised recommendations in the dashboard that rank each action by its expected point impact on your on-chain credit score.",
+  },
+  {
+    q: "Is ZentraScore trustless?",
+    a: "Yes. Scores are published by a 2-of-3 multi-oracle network and written to the on-chain CreditScoreOracle contract. Any lending protocol can read your crypto credit score directly on-chain — no API key, no intermediary, no trust required.",
+  },
+  {
+    q: "How often is my on-chain credit score updated?",
+    a: "Your ZentraScore crypto credit score recomputes on every relevant on-chain event (borrow, repayment, liquidation), is cached for one hour for reads, and is republished to the on-chain oracle with a 7-day TTL so lenders always see a fresh rating.",
+  },
+];
+
+const softwareApplicationSchema = {
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  name: "ZentraScore",
+  applicationCategory: "FinanceApplication",
+  operatingSystem: "Web",
+  url: "/",
+  description:
+    "ZentraScore is the first on-chain crypto credit score for DeFi. Index wallet behavior across 18+ DeFi protocols and unlock undercollateralized lending, better rates, and higher limits.",
+  offers: {
+    "@type": "Offer",
+    price: "0",
+    priceCurrency: "USD",
+  },
+  aggregateRating: {
+    "@type": "AggregateRating",
+    ratingValue: "4.8",
+    ratingCount: "184",
+    bestRating: "5",
+    worstRating: "1",
+  },
+  featureList: [
+    "On-chain crypto credit score (300–850)",
+    "Cryptocurrency credit score API",
+    "REST API + on-chain oracle",
+    "Score webhooks and alerts",
+    "Multi-chain coverage (Ethereum, Arbitrum, Base, Avalanche, Unichain)",
+    "Sybil and fraud detection",
+  ],
+};
+
+const faqSchema = {
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  mainEntity: faqs.map((f) => ({
+    "@type": "Question",
+    name: f.q,
+    acceptedAnswer: {
+      "@type": "Answer",
+      text: f.a,
+    },
+  })),
+};
+
 /* ═══════════════════════════════════════════════════════
    PAGE
    ═══════════════════════════════════════════════════════ */
@@ -158,47 +255,63 @@ export default function LandingPage() {
   return (
     <main className="pt-[68px]">
       <ScrollReveal />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(softwareApplicationSchema),
+        }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(faqSchema),
+        }}
+      />
 
       {/* ── HERO ─────────────────────────────────────── */}
       <section
         id="hero"
-        className="relative min-h-[calc(100vh-68px)] bg-cs-dark grid grid-cols-1 lg:grid-cols-2 items-center gap-0 px-6 lg:px-14 py-16 lg:py-20 overflow-hidden"
+        className="relative min-h-[calc(100vh-68px)] bg-cs-dark px-4 sm:px-6 md:px-10 lg:px-14 py-12 sm:py-16 lg:py-20 overflow-hidden"
       >
         {/* Ambient glows */}
         <div className="absolute -top-[300px] -left-[200px] w-[800px] h-[800px] rounded-full bg-[radial-gradient(ellipse,rgba(0,201,141,.12),transparent_65%)] pointer-events-none" />
         <div className="absolute -bottom-[200px] -right-[100px] w-[600px] h-[600px] rounded-full bg-[radial-gradient(ellipse,rgba(0,201,141,.07),transparent_65%)] pointer-events-none" />
 
+        <div className="relative z-[2] max-w-[1400px] mx-auto grid grid-cols-1 md:grid-cols-[1.05fr_0.95fr] lg:grid-cols-[1.05fr_1fr] items-center gap-10 md:gap-8 lg:gap-12 min-h-[calc(100vh-180px)]">
         {/* Left */}
-        <div className="relative z-[2] lg:pr-12">
-          <div className="inline-flex items-center gap-2 bg-cs-green/[.12] border border-cs-green/25 text-cs-green text-xs font-semibold px-4 py-1.5 rounded-full mb-8 animate-fade-up">
+        <div className="md:pr-6 lg:pr-12">
+          <div className="inline-flex items-center gap-2 bg-cs-green/[.12] border border-cs-green/25 text-cs-green text-[11px] sm:text-xs font-semibold px-3.5 sm:px-4 py-1.5 rounded-full mb-6 sm:mb-8 animate-fade-up">
             <span className="w-1.5 h-1.5 rounded-full bg-cs-green animate-pulse2" />
-            Live on Ethereum &middot; Arbitrum &middot; Base &middot; Avalanche &middot; Unichain
+            <span className="truncate">
+              Live on Ethereum &middot; Arbitrum &middot; Base &middot; Avalanche &middot; Unichain
+            </span>
           </div>
 
-          <h1 className="text-[clamp(40px,4.5vw,62px)] font-extrabold leading-[1.08] tracking-[-2px] text-white mb-5 animate-fade-up [animation-delay:.08s]">
-            Easy &amp; Digital
+          <h1 className="text-[clamp(32px,5vw,62px)] font-extrabold leading-[1.08] tracking-[-1px] sm:tracking-[-1.5px] md:tracking-[-2px] text-white mb-5 animate-fade-up [animation-delay:.08s]">
+            Crypto Credit Score,
             <br />
-            On-Chain Credit
+            Built On-Chain for
             <br />
-            <em className="not-italic text-cs-green">Intelligence</em>
+            <em className="not-italic text-cs-green">DeFi Lending</em>
           </h1>
 
-          <p className="text-base text-white/[.55] leading-[1.75] max-w-[460px] mb-9 animate-fade-up [animation-delay:.16s]">
-            The first credit score built entirely from blockchain data. Unlock
-            undercollateralized lending, better rates, and higher limits — no
-            banks, no paperwork.
+          <p className="text-[15px] sm:text-base text-white/[.55] leading-[1.75] max-w-[480px] mb-8 sm:mb-9 animate-fade-up [animation-delay:.16s]">
+            ZentraScore is the first on-chain credit score for DeFi — a
+            cryptocurrency credit score built from every borrow, repayment, and
+            liquidation on-chain. Unlock undercollateralized lending, better
+            rates, and higher limits, with no banks and no paperwork.
           </p>
 
           <div className="flex gap-3 flex-wrap mb-10 animate-fade-up [animation-delay:.24s]">
             <Link
               href="/sign-up"
-              className="text-[15px] font-bold px-7 py-3 rounded-cs bg-cs-green text-white transition hover:bg-cs-green-d hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(0,201,141,.4)] inline-flex items-center gap-2"
+              className="text-[15px] font-bold px-6 sm:px-7 py-3 rounded-cs bg-cs-green text-white transition hover:bg-cs-green-d hover:-translate-y-0.5 hover:shadow-[0_8px_28px_rgba(0,201,141,.4)] inline-flex items-center gap-2"
             >
-              Get Started &rarr;
+              Get my crypto credit score &rarr;
             </Link>
             <a
               href="#on-chain-scoring"
-              className="text-[15px] font-semibold px-6 py-3 rounded-cs bg-transparent text-white/80 border-[1.5px] border-white/[.18] cursor-pointer transition hover:border-white/45 hover:text-white hover:bg-white/[.06] inline-flex items-center gap-2"
+              className="text-[15px] font-semibold px-5 sm:px-6 py-3 rounded-cs bg-transparent text-white/80 border-[1.5px] border-white/[.18] cursor-pointer transition hover:border-white/45 hover:text-white hover:bg-white/[.06] inline-flex items-center gap-2"
             >
               See on-chain scoring
             </a>
@@ -208,18 +321,18 @@ export default function LandingPage() {
             <HeroLookup />
           </div>
 
-          <div className="flex gap-10 pt-9 border-t border-white/[.08] animate-fade-up [animation-delay:.32s]">
+          <div className="flex flex-wrap gap-6 sm:gap-8 lg:gap-10 pt-8 sm:pt-9 border-t border-white/[.08] animate-fade-up [animation-delay:.32s]">
             {[
               { v: "$10", em: "M+", l: "Transactions" },
               { v: "2000", em: "+", l: "Active Users" },
               { v: "80", em: "%", l: "Revenue Growth" },
             ].map((s) => (
               <div key={s.l}>
-                <p className="text-[28px] font-extrabold text-white tracking-tight">
+                <p className="text-[24px] sm:text-[28px] font-extrabold text-white tracking-tight">
                   {s.v}
                   <em className="not-italic text-cs-green">{s.em}</em>
                 </p>
-                <p className="text-xs text-white/[.38] mt-0.5 font-medium">
+                <p className="text-[11px] sm:text-xs text-white/[.38] mt-0.5 font-medium">
                   {s.l}
                 </p>
               </div>
@@ -228,10 +341,10 @@ export default function LandingPage() {
         </div>
 
         {/* Right — Hero Card */}
-        <div className="relative z-[2] hidden lg:flex items-center justify-end animate-fade-up [animation-delay:.2s]">
-          <div className="relative w-full max-w-[400px]">
-            {/* Floating card top-left */}
-            <div className="hfc -top-7 -left-11 animate-float z-10">
+        <div className="hidden md:flex relative items-center justify-center lg:justify-end animate-fade-up [animation-delay:.2s]">
+          <div className="relative w-full max-w-[340px] lg:max-w-[400px]">
+            {/* Floating card top-left (desktop-only to avoid clipping on tablets) */}
+            <div className="hfc hidden lg:block -top-7 -left-11 animate-float z-10">
               <div className="flex items-center gap-2.5">
                 <span className="w-[30px] h-[30px] rounded-lg bg-[#e8f5e9] flex items-center justify-center text-[15px]">
                   💳
@@ -313,8 +426,8 @@ export default function LandingPage() {
               </div>
             </div>
 
-            {/* Floating card bottom-right */}
-            <div className="hfc -bottom-6 -right-[38px] animate-float-delayed z-10">
+            {/* Floating card bottom-right (desktop-only to avoid clipping on tablets) */}
+            <div className="hfc hidden lg:block -bottom-6 -right-[38px] animate-float-delayed z-10">
               <div className="flex items-center gap-2.5">
                 <span className="w-[30px] h-[30px] rounded-lg bg-[#e8f5e9] flex items-center justify-center text-[15px]">
                   ✅
@@ -334,14 +447,15 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
+        </div>
       </section>
 
       {/* ── PARTNERS ─────────────────────────────────── */}
-      <div className="bg-[#f9faf9] border-y border-cs-border px-6 lg:px-14 py-6 flex items-center gap-8 lg:gap-10 flex-wrap">
+      <div className="bg-[#f9faf9] border-y border-cs-border px-4 sm:px-6 lg:px-14 py-6 flex items-center gap-6 sm:gap-8 lg:gap-10 flex-wrap">
         <span className="text-xs font-semibold text-cs-ink4 uppercase tracking-[.06em] whitespace-nowrap">
           Integrated with
         </span>
-        <div className="flex items-center gap-7 lg:gap-9 flex-wrap flex-1">
+        <div className="flex items-center gap-5 sm:gap-7 lg:gap-9 flex-wrap flex-1">
           {partners.map((p) => (
             <span
               key={p}
@@ -354,20 +468,20 @@ export default function LandingPage() {
       </div>
 
       {/* ── ON-CHAIN SCORING ─────────────────────────── */}
-      <section id="on-chain-scoring" className="bg-white py-24 px-6 lg:px-14">
+      <section id="on-chain-scoring" className="bg-white py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-14">
         <div className="max-w-[1100px] mx-auto">
-          <div className="text-center mb-20 reveal">
+          <div className="text-center mb-14 sm:mb-16 lg:mb-20 reveal">
             <span className="inline-block text-xs font-bold tracking-[.1em] uppercase text-cs-green-d bg-cs-green/[.08] px-3.5 py-1 rounded-full mb-4">
               On-chain Scoring
             </span>
-            <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-cs-ink tracking-[-1.5px] leading-[1.08] mb-3.5 mx-auto">
-              From wallet address
-              <br />
-              to verified credit score
+            <h2 className="text-[clamp(26px,3.5vw,44px)] font-extrabold text-cs-ink tracking-[-1px] sm:tracking-[-1.5px] leading-[1.08] mb-3.5 mx-auto">
+              From wallet address to a
+              <br className="hidden sm:inline" />
+              {" "}verified on-chain credit score
             </h2>
-            <p className="text-[15px] text-cs-ink3 leading-[1.75] max-w-[480px] mx-auto">
-              Turn your on-chain history into a trustless, readable credit rating
-              — no forms, no documents, no banks.
+            <p className="text-[15px] text-cs-ink3 leading-[1.75] max-w-[520px] mx-auto">
+              Turn your on-chain history into a trustless cryptocurrency credit
+              score — no forms, no documents, no banks.
             </p>
           </div>
 
@@ -740,18 +854,19 @@ export default function LandingPage() {
       </section>
 
       {/* ── FEATURES ─────────────────────────────────── */}
-      <section id="features" className="bg-cs-paper py-24 px-6 lg:px-14">
+      <section id="features" className="bg-cs-paper py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-14">
         <div className="max-w-[1100px] mx-auto">
-          <div className="text-center mb-14 reveal">
+          <div className="text-center mb-12 sm:mb-14 reveal">
             <span className="inline-block text-xs font-bold tracking-[.1em] uppercase text-cs-green-d bg-cs-green/[.08] px-3.5 py-1 rounded-full mb-4">
               Why ZentraScore
             </span>
-            <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-cs-ink tracking-[-1.5px] leading-[1.08] mb-3.5 mx-auto">
-              Why You Should Use ZentraScore
+            <h2 className="text-[clamp(26px,3.5vw,44px)] font-extrabold text-cs-ink tracking-[-1px] sm:tracking-[-1.5px] leading-[1.08] mb-3.5 mx-auto">
+              The most reliable crypto credit score for DeFi
             </h2>
-            <p className="text-[15px] text-cs-ink3 leading-[1.75] max-w-[480px] mx-auto">
-              Every factor computed from immutable on-chain data. No surveys, no
-              documents, no intermediaries.
+            <p className="text-[15px] text-cs-ink3 leading-[1.75] max-w-[520px] mx-auto">
+              Every factor in your on-chain credit score is computed from
+              immutable blockchain data. No surveys, no documents, no
+              intermediaries.
             </p>
           </div>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 reveal">
@@ -779,7 +894,8 @@ export default function LandingPage() {
       </section>
 
       {/* ── BALANCE / DARK SECTION ────────────────────── */}
-      <section className="bg-cs-dark grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center px-6 lg:px-14 py-24">
+      <section className="bg-cs-dark px-4 sm:px-6 lg:px-14 py-16 sm:py-20 lg:py-24">
+        <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 lg:gap-20 items-center">
         <div className="reveal">
           <span className="inline-block text-xs font-bold tracking-[.08em] uppercase text-cs-green bg-cs-green/10 px-3.5 py-1 rounded-full mb-5">
             Live Dashboard
@@ -919,10 +1035,12 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
+        </div>
       </section>
 
       {/* ── HANDOFF / SCORE DETAIL ────────────────────── */}
-      <section className="bg-white grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-20 items-center px-6 lg:px-14 py-24">
+      <section className="bg-white px-4 sm:px-6 lg:px-14 py-16 sm:py-20 lg:py-24">
+        <div className="max-w-[1400px] mx-auto grid grid-cols-1 lg:grid-cols-2 gap-12 md:gap-16 lg:gap-20 items-center">
         <div className="reveal">
           <span className="inline-block text-xs font-bold tracking-[.1em] uppercase text-cs-green-d bg-cs-green/[.08] px-3.5 py-1 rounded-full mb-4">
             Score Intelligence
@@ -1040,32 +1158,33 @@ export default function LandingPage() {
             </div>
           </div>
         </div>
+        </div>
       </section>
 
       {/* ── PRICING ──────────────────────────────────── */}
-      <section id="pricing" className="bg-cs-paper py-24 px-6 lg:px-14">
+      <section id="pricing" className="bg-cs-paper py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-14">
         <div className="max-w-[1100px] mx-auto">
-          <div className="text-center mb-14 reveal">
+          <div className="text-center mb-12 sm:mb-14 reveal">
             <span className="inline-block text-xs font-bold tracking-[.1em] uppercase text-cs-green-d bg-cs-green/[.08] px-3.5 py-1 rounded-full mb-4">
               Pricing
             </span>
-            <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-cs-ink tracking-[-1.5px] leading-[1.08] mb-3.5 mx-auto">
-              Simple Pricing.
+            <h2 className="text-[clamp(26px,3.5vw,44px)] font-extrabold text-cs-ink tracking-[-1px] sm:tracking-[-1.5px] leading-[1.08] mb-3.5 mx-auto">
+              Crypto credit score pricing.
               <br />
-              Serious Infrastructure.
+              Serious infrastructure.
             </h2>
             <p className="text-[15px] text-cs-ink3 leading-[1.75] max-w-[480px] mx-auto">
               Start free. Scale as your protocol grows. No hidden fees, no
               per-chain surcharges.
             </p>
           </div>
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start reveal">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-start reveal">
             {pricingPlans.map((plan) => (
               <div
                 key={plan.name}
-                className={`rounded-[20px] p-9 px-8 transition ${
+                className={`rounded-[20px] p-6 md:p-8 lg:p-9 lg:px-8 transition ${
                   plan.featured
-                    ? "bg-cs-dark text-white scale-[1.03] shadow-cs-xl"
+                    ? "bg-cs-dark text-white md:col-span-2 lg:col-span-1 lg:scale-[1.03] shadow-cs-xl"
                     : "bg-white border-[1.5px] border-cs-border hover:shadow-cs-md"
                 }`}
               >
@@ -1123,15 +1242,15 @@ export default function LandingPage() {
       </section>
 
       {/* ── TESTIMONIALS ─────────────────────────────── */}
-      <section className="bg-white py-24 px-6 lg:px-14">
+      <section className="bg-white py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-14">
         <div className="max-w-[1100px] mx-auto">
-          <div className="text-center mb-14 reveal">
-            <h2 className="text-[clamp(28px,3.5vw,44px)] font-extrabold text-cs-ink tracking-[-1.5px] leading-[1.08] mb-2.5 mx-auto">
-              What Our Users Are Saying
+          <div className="text-center mb-12 sm:mb-14 reveal">
+            <h2 className="text-[clamp(26px,3.5vw,44px)] font-extrabold text-cs-ink tracking-[-1px] sm:tracking-[-1.5px] leading-[1.08] mb-2.5 mx-auto">
+              What DeFi users and protocols say
               <br />
-              About ZentraScore
+              about the ZentraScore crypto credit score
             </h2>
-            <p className="text-[15px] text-cs-ink3 leading-[1.75] max-w-[480px] mx-auto">
+            <p className="text-[15px] text-cs-ink3 leading-[1.75] max-w-[520px] mx-auto">
               Trusted by 18+ protocols and thousands of DeFi users worldwide
             </p>
           </div>
@@ -1174,16 +1293,56 @@ export default function LandingPage() {
         </div>
       </section>
 
+      {/* ── FAQ ──────────────────────────────────────── */}
+      <section id="faq" className="bg-cs-paper py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-14">
+        <div className="max-w-[820px] mx-auto">
+          <div className="text-center mb-10 sm:mb-12 reveal">
+            <span className="inline-block text-xs font-bold tracking-[.1em] uppercase text-cs-green-d bg-cs-green/[.08] px-3.5 py-1 rounded-full mb-4">
+              FAQ
+            </span>
+            <h2 className="text-[clamp(24px,3.5vw,40px)] font-extrabold text-cs-ink tracking-[-1px] sm:tracking-[-1.5px] leading-[1.08] mb-3.5">
+              Crypto credit score, answered
+            </h2>
+            <p className="text-[15px] text-cs-ink3 leading-[1.75] max-w-[560px] mx-auto">
+              Everything you need to know about how a cryptocurrency credit
+              score works, how it&apos;s calculated, and how DeFi protocols use
+              it.
+            </p>
+          </div>
+          <div className="flex flex-col gap-3 sm:gap-4 reveal">
+            {faqs.map((faq) => (
+              <details
+                key={faq.q}
+                className="group bg-white border-[1.5px] border-cs-border rounded-[14px] open:shadow-cs-sm open:border-cs-green/30 transition"
+              >
+                <summary className="list-none cursor-pointer flex items-center justify-between gap-4 p-5 sm:p-6 [&::-webkit-details-marker]:hidden">
+                  <h3 className="text-[15px] sm:text-base font-bold text-cs-ink leading-snug">
+                    {faq.q}
+                  </h3>
+                  <span className="shrink-0 w-7 h-7 rounded-full bg-cs-paper border border-cs-border flex items-center justify-center text-cs-ink2 text-lg font-bold group-open:rotate-45 transition-transform">
+                    +
+                  </span>
+                </summary>
+                <div className="px-5 sm:px-6 pb-5 sm:pb-6 -mt-1 text-[14px] text-cs-ink3 leading-[1.75]">
+                  {faq.a}
+                </div>
+              </details>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ── NEWSLETTER ───────────────────────────────── */}
-      <section className="bg-white border-t border-cs-border py-20 px-6 lg:px-14 text-center">
+      <section className="bg-white border-t border-cs-border py-16 sm:py-20 px-4 sm:px-6 lg:px-14 text-center">
         <div className="max-w-[560px] mx-auto reveal">
           <span className="text-[44px] block mb-[18px]">📬</span>
-          <h2 className="text-[clamp(26px,3vw,38px)] font-extrabold text-cs-ink tracking-[-1.2px] mb-3">
+          <h2 className="text-[clamp(24px,3vw,38px)] font-extrabold text-cs-ink tracking-[-1px] sm:tracking-[-1.2px] mb-3">
             Subscribe to our newsletter
           </h2>
           <p className="text-sm text-cs-ink3 mb-7 leading-[1.7]">
-            Get weekly updates on DeFi credit markets, score methodology
-            changes, and new protocol integrations delivered to your inbox.
+            Get weekly updates on DeFi credit markets, crypto credit score
+            methodology changes, and new protocol integrations delivered to
+            your inbox.
           </p>
           <div className="flex gap-2.5 justify-center max-w-[440px] mx-auto flex-col sm:flex-row">
             <input
@@ -1199,20 +1358,21 @@ export default function LandingPage() {
       </section>
 
       {/* ── CTA BANNER ───────────────────────────────── */}
-      <section className="bg-gradient-to-br from-cs-dark to-cs-dark2 py-20 px-6 lg:px-14 text-center relative overflow-hidden">
+      <section className="bg-gradient-to-br from-cs-dark to-cs-dark2 py-16 sm:py-20 px-4 sm:px-6 lg:px-14 text-center relative overflow-hidden">
         <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[600px] h-[600px] bg-[radial-gradient(ellipse,rgba(0,201,141,.12),transparent_65%)] pointer-events-none" />
-        <div className="max-w-[700px] mx-auto relative z-[1]">
+        <div className="max-w-[760px] mx-auto relative z-[1]">
           <span className="inline-block text-xs font-bold tracking-[.1em] uppercase text-cs-green bg-cs-green/[.08] px-3.5 py-1 rounded-full mb-4">
             Ready to get started?
           </span>
-          <h2 className="text-[clamp(32px,4vw,52px)] font-extrabold text-white tracking-[-1.5px] leading-[1.1] mb-4">
-            Unlock undercollateralized lending
-            <br />
-            with your on-chain credit score
+          <h2 className="text-[clamp(26px,4vw,52px)] font-extrabold text-white tracking-[-1px] sm:tracking-[-1.5px] leading-[1.1] mb-4">
+            Unlock undercollateralized lending with
+            <br className="hidden sm:inline" />
+            {" "}your on-chain crypto credit score
           </h2>
-          <p className="text-[15px] text-white/50 leading-[1.75] max-w-[480px] mx-auto mb-9">
-            Join 18+ protocols already using ZentraScore to price risk, reduce
-            defaults, and reward good borrowers with better rates.
+          <p className="text-[15px] text-white/50 leading-[1.75] max-w-[520px] mx-auto mb-9">
+            Join 18+ protocols already using ZentraScore&apos;s cryptocurrency
+            credit score to price risk, reduce defaults, and reward good
+            borrowers with better rates.
           </p>
           <div className="flex gap-3 justify-center flex-wrap">
             <Link

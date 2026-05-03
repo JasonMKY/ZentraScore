@@ -1,4 +1,5 @@
 // app/dashboard/page.tsx
+import type { Metadata } from "next";
 import { auth, currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
 import { db } from "@/lib/db";
@@ -13,6 +14,13 @@ import type {
   SubscriptionPlan,
 } from "@/types";
 import { syncUserPlanFromStripe } from "@/lib/billing/syncUserPlanFromStripe";
+
+export const metadata: Metadata = {
+  title: "Dashboard",
+  description: "Your ZentraScore dashboard.",
+  robots: { index: false, follow: false, nocache: true },
+  alternates: { canonical: "/dashboard" },
+};
 
 export default async function DashboardPage({
   searchParams,

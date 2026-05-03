@@ -78,7 +78,8 @@ export default function Nav() {
   return (
     <>
       <nav
-        className={`fixed top-0 left-0 right-0 z-[300] flex items-center justify-between px-6 lg:px-14 h-[68px] transition-all duration-300 ${
+        aria-label="Primary navigation"
+        className={`fixed top-0 left-0 right-0 z-[300] flex items-center justify-between px-4 sm:px-6 lg:px-14 h-[68px] transition-all duration-300 ${
           isDark
             ? "bg-[rgba(11,26,18,0.92)] backdrop-blur-2xl border-b border-white/[.06]"
             : "bg-white/95 backdrop-blur-md border-b border-cs-border shadow-cs-sm"
@@ -189,7 +190,7 @@ export default function Nav() {
             {navDisplayName && (
               <div className="hidden lg:flex items-center gap-2 pl-1 pr-1">
                 <span
-                  className={`text-sm font-semibold max-w-[160px] truncate ${
+                  className={`text-sm font-semibold max-w-[120px] xl:max-w-[160px] truncate ${
                     isDark ? "text-white/90" : "text-cs-ink"
                   }`}
                   title={navDisplayName}

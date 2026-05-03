@@ -1,0 +1,22 @@
+{
+  "name": "ZentraScore — Crypto Credit Score for DeFi",
+  "short_name": "ZentraScore",
+  "description": "On-chain cryptocurrency credit score that unlocks undercollateralized lending, better rates, and higher limits across DeFi.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#00c98d",
+  "categories": ["finance", "business", "productivity"],
+  "icons": [
+    {
+      "src": "/icon.png",
+      "sizes": "32x32",
+      "type": "image/png"
+    },
+    {
+      "src": "/favicon.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}

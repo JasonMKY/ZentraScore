@@ -1,5 +1,5 @@
 import { ClerkProvider } from "@clerk/nextjs";
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Inter, DM_Mono } from "next/font/google";
 import Nav from "@/components/Nav";
 import "./globals.css";
@@ -30,13 +30,55 @@ const normalizeBaseUrl = (value?: string | null) => {
 const metadataBaseUrl =
   normalizeBaseUrl(process.env.NEXT_PUBLIC_APP_URL) ||
   normalizeBaseUrl(process.env.VERCEL_URL) ||
-  "https://zentrascore.io";
+  "https://zentrascore.com";
+
+const SEO_KEYWORDS = [
+  "crypto credit score",
+  "cryptocurrency credit score",
+  "on-chain credit score",
+  "blockchain credit score",
+  "DeFi credit score",
+  "credit score",
+  "DeFi lending",
+  "undercollateralized lending",
+  "wallet credit score",
+  "Ethereum credit score",
+  "on-chain credit rating",
+  "crypto credit rating",
+  "DeFi credit rating",
+  "crypto underwriting",
+  "Web3 credit score",
+];
+
+export const viewport: Viewport = {
+  width: "device-width",
+  initialScale: 1,
+  maximumScale: 5,
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
+    { media: "(prefers-color-scheme: dark)", color: "#0b1a12" },
+  ],
+  colorScheme: "light",
+};
 
 export const metadata: Metadata = {
   metadataBase: new URL(metadataBaseUrl),
-  title: "ZentraScore — On-Chain Credit Intelligence",
+  title: {
+    default:
+      "ZentraScore — Crypto Credit Score for DeFi & On-Chain Lending",
+    template: "%s | ZentraScore",
+  },
   description:
-    "The first credit score built entirely from blockchain data. Unlock undercollateralized lending, better rates, and higher limits.",
+    "ZentraScore is the leading crypto credit score for DeFi. Get an on-chain, blockchain-verified cryptocurrency credit score to unlock undercollateralized lending, lower rates, and higher limits.",
+  keywords: SEO_KEYWORDS,
+  applicationName: "ZentraScore",
+  authors: [{ name: "ZentraScore", url: metadataBaseUrl }],
+  creator: "ZentraScore",
+  publisher: "ZentraScore",
+  category: "finance",
+  alternates: {
+    canonical: "/",
+  },
   icons: {
     icon: [
       { url: "/icon.png", type: "image/png", sizes: "32x32" },
@@ -44,11 +86,95 @@ export const metadata: Metadata = {
     ],
     shortcut: "/favicon.ico",
   },
+  manifest: "/site.webmanifest",
   openGraph: {
-    title: "ZentraScore",
-    description: "On-chain credit scoring for DeFi",
-    url: "https://zentrascore.io",
+    type: "website",
+    locale: "en_US",
+    url: metadataBaseUrl,
     siteName: "ZentraScore",
+    title:
+      "ZentraScore — Crypto Credit Score for DeFi & On-Chain Lending",
+    description:
+      "The first on-chain credit scoring infrastructure for DeFi. A crypto credit score built from every borrow, repayment, and liquidation across 18+ protocols.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "ZentraScore — Crypto Credit Score for DeFi",
+    description:
+      "On-chain cryptocurrency credit score that unlocks undercollateralized lending, better rates, and higher limits across DeFi.",
+    creator: "@zentrascore",
+    site: "@zentrascore",
+  },
+  robots: {
+    index: true,
+    follow: true,
+    nocache: false,
+    googleBot: {
+      index: true,
+      follow: true,
+      noimageindex: false,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  other: {
+    "format-detection": "telephone=no",
+  },
+};
+
+const organizationSchema = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: "ZentraScore",
+  legalName: "ZentraScore",
+  url: metadataBaseUrl,
+  logo: `${metadataBaseUrl}/icon.png`,
+  description:
+    "ZentraScore provides the first blockchain-native crypto credit score for DeFi — an on-chain credit rating built from verified on-chain activity.",
+  foundingDate: "2025",
+  knowsAbout: [
+    "Crypto credit score",
+    "Cryptocurrency credit score",
+    "On-chain credit score",
+    "DeFi credit score",
+    "Blockchain credit rating",
+    "Undercollateralized lending",
+  ],
+  sameAs: [
+    "https://twitter.com/zentrascore",
+    "https://github.com/zentrascore",
+  ],
+  contactPoint: [
+    {
+      "@type": "ContactPoint",
+      email: "support@zentrascore.com",
+      contactType: "customer support",
+      availableLanguage: ["English"],
+    },
+  ],
+};
+
+const websiteSchema = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: "ZentraScore",
+  url: metadataBaseUrl,
+  inLanguage: "en-US",
+  description:
+    "Crypto credit score for DeFi — on-chain, verifiable, and updated in real time.",
+  publisher: {
+    "@type": "Organization",
+    name: "ZentraScore",
+    url: metadataBaseUrl,
+  },
+  potentialAction: {
+    "@type": "SearchAction",
+    target: {
+      "@type": "EntryPoint",
+      urlTemplate: `${metadataBaseUrl}/docs?q={search_term_string}`,
+    },
+    "query-input": "required name=search_term_string",
   },
 };
 
@@ -60,6 +186,18 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${dmMono.variable}`}>
       <body className={`${inter.className} min-h-screen antialiased`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(organizationSchema),
+          }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify(websiteSchema),
+          }}
+        />
         <ClerkProvider
           appearance={{
             variables: {

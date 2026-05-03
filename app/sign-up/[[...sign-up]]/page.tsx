@@ -1,9 +1,18 @@
+import type { Metadata } from "next";
 import { SignUp } from "@clerk/nextjs";
 import Link from "next/link";
 
+export const metadata: Metadata = {
+  title: "Sign up",
+  description:
+    "Create a ZentraScore account to get your on-chain crypto credit score.",
+  robots: { index: false, follow: false, nocache: true },
+  alternates: { canonical: "/sign-up" },
+};
+
 export default function SignUpPage() {
   return (
-    <div className="min-h-screen pt-[68px] flex flex-col items-center justify-center bg-cs-paper px-4 py-16">
+    <div className="min-h-screen pt-[68px] flex flex-col items-center justify-center bg-cs-paper px-4 py-10 sm:py-14 lg:py-16">
       <SignUp
         appearance={{
           variables: { colorPrimary: "#00c98d", borderRadius: "10px" },

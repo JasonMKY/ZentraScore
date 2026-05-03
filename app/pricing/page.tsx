@@ -1,5 +1,34 @@
+import type { Metadata } from "next";
 import Footer from "@/components/Footer";
 import CheckoutButton from "@/components/pricing/CheckoutButton";
+
+export const metadata: Metadata = {
+  title: "Crypto Credit Score Pricing — Plans for DeFi Protocols & Users",
+  description:
+    "Compare ZentraScore plans for individual DeFi users, protocol integrations, and risk analytics teams. Transparent crypto credit score pricing starting at $9/month.",
+  alternates: { canonical: "/pricing" },
+  keywords: [
+    "crypto credit score pricing",
+    "cryptocurrency credit score pricing",
+    "DeFi credit score API pricing",
+    "on-chain credit score API",
+    "blockchain credit scoring pricing",
+    "ZentraScore pricing",
+  ],
+  openGraph: {
+    title: "Crypto Credit Score Pricing — Plans for DeFi Protocols & Users",
+    description:
+      "Transparent, scalable pricing for the leading on-chain crypto credit score. Consumer, Protocol API, and Risk Analytics plans.",
+    url: "/pricing",
+    type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Crypto Credit Score Pricing — ZentraScore",
+    description:
+      "On-chain credit scoring plans for DeFi users, protocols, and risk teams.",
+  },
+};
 
 type PlanId = "CONSUMER" | "PROTOCOL" | "ANALYTICS";
 
@@ -115,37 +144,70 @@ const faqs = [
   },
 ];
 
+const productSchemas = plans.map((plan) => ({
+  "@context": "https://schema.org",
+  "@type": "Product",
+  name: `ZentraScore ${plan.name}`,
+  description: plan.desc,
+  brand: { "@type": "Brand", name: "ZentraScore" },
+  category: "Crypto Credit Score",
+  offers: {
+    "@type": "Offer",
+    price: plan.price.replace("$", ""),
+    priceCurrency: "USD",
+    priceSpecification: {
+      "@type": "UnitPriceSpecification",
+      price: plan.price.replace("$", ""),
+      priceCurrency: "USD",
+      referenceQuantity: {
+        "@type": "QuantitativeValue",
+        value: 1,
+        unitCode: "MON",
+      },
+    },
+    availability: "https://schema.org/InStock",
+    url: "/pricing",
+  },
+}));
+
 export default function PricingPage() {
   return (
     <main className="pt-[68px]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(productSchemas),
+        }}
+      />
       {/* Header */}
-      <section className="bg-cs-paper py-24 px-6 lg:px-14 border-b border-cs-border">
+      <section className="bg-cs-paper py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-14 border-b border-cs-border">
         <div className="max-w-[1100px] mx-auto text-center">
           <span className="inline-block text-xs font-bold tracking-[.1em] uppercase text-cs-green-d bg-cs-green/[.08] px-3.5 py-1 rounded-full mb-4">
             Pricing
           </span>
-          <h1 className="text-[clamp(32px,4vw,52px)] font-extrabold text-cs-ink tracking-[-1.5px] leading-[1.08] mb-4">
-            Simple Pricing.
+          <h1 className="text-[clamp(28px,4vw,52px)] font-extrabold text-cs-ink tracking-[-1.2px] sm:tracking-[-1.5px] leading-[1.08] mb-4">
+            Crypto Credit Score Pricing.
             <br />
             Serious Infrastructure.
           </h1>
-          <p className="text-[15px] text-cs-ink3 leading-[1.75] max-w-[480px] mx-auto">
-            Start free. Scale as your protocol grows. No hidden fees, no
-            per-chain surcharges.
+          <p className="text-[15px] text-cs-ink3 leading-[1.75] max-w-[560px] mx-auto">
+            Transparent crypto credit score pricing for individuals, DeFi
+            protocols, and analytics teams. Start free. Scale as your protocol
+            grows — no hidden fees, no per-chain surcharges.
           </p>
         </div>
       </section>
 
       {/* Plan cards */}
-      <section className="bg-cs-paper pb-24 px-6 lg:px-14">
+      <section className="bg-cs-paper pb-16 sm:pb-20 lg:pb-24 px-4 sm:px-6 lg:px-14">
         <div className="max-w-[1100px] mx-auto -mt-2">
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5 items-start">
             {plans.map((plan) => (
               <div
                 key={plan.name}
-                className={`rounded-[20px] p-9 px-8 transition ${
+                className={`rounded-[20px] p-6 md:p-8 lg:p-9 lg:px-8 transition ${
                   plan.featured
-                    ? "bg-cs-dark text-white lg:scale-[1.03] shadow-cs-xl"
+                    ? "bg-cs-dark text-white md:col-span-2 lg:col-span-1 lg:scale-[1.03] shadow-cs-xl"
                     : "bg-white border-[1.5px] border-cs-border hover:shadow-cs-md"
                 }`}
               >
@@ -202,13 +264,13 @@ export default function PricingPage() {
       </section>
 
       {/* Comparison table */}
-      <section className="bg-white py-24 px-6 lg:px-14 border-t border-cs-border">
+      <section className="bg-white py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-14 border-t border-cs-border">
         <div className="max-w-[900px] mx-auto">
           <h2 className="text-2xl font-extrabold text-cs-ink tracking-tight mb-8 text-center">
-            Compare plans
+            Compare crypto credit score plans
           </h2>
-          <div className="overflow-x-auto">
-            <table className="loan-table w-full">
+          <div className="overflow-x-auto -mx-4 sm:mx-0 px-4 sm:px-0">
+            <table className="loan-table w-full min-w-[520px]">
               <thead>
                 <tr>
                   <th className="text-left">Feature</th>
@@ -235,7 +297,7 @@ export default function PricingPage() {
       </section>
 
       {/* FAQ */}
-      <section className="bg-cs-paper py-24 px-6 lg:px-14">
+      <section className="bg-cs-paper py-16 sm:py-20 lg:py-24 px-4 sm:px-6 lg:px-14">
         <div className="max-w-[700px] mx-auto">
           <h2 className="text-2xl font-extrabold text-cs-ink tracking-tight mb-10 text-center">
             Frequently asked questions
@@ -244,7 +306,7 @@ export default function PricingPage() {
             {faqs.map((faq) => (
               <div
                 key={faq.q}
-                className="bg-white border-[1.5px] border-cs-border rounded-[14px] p-5 px-6"
+                className="bg-white border-[1.5px] border-cs-border rounded-[14px] p-5 sm:p-6"
               >
                 <h4 className="text-sm font-bold text-cs-ink mb-2">
                   {faq.q}

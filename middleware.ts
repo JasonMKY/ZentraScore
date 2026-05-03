@@ -9,7 +9,14 @@ import { authMiddleware } from "@clerk/nextjs/server";
  * for middleware purposes (individual API handlers may still return 401).
  */
 export default authMiddleware({
-  ignoredRoutes: ["/api/webhooks(.*)"],
+  ignoredRoutes: [
+    "/api/webhooks(.*)",
+    "/robots.txt",
+    "/sitemap.xml",
+    "/site.webmanifest",
+    "/opengraph-image(.*)",
+    "/twitter-image(.*)",
+  ],
   publicRoutes: [
     "/",
     "/pricing(.*)",

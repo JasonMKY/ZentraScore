@@ -242,7 +242,7 @@ export default function DocsClient() {
 
   return (
     <main className="pt-[68px]">
-      <div className="grid grid-cols-1 lg:grid-cols-[272px_1fr] min-h-screen">
+      <div className="grid grid-cols-1 lg:grid-cols-[248px_1fr] xl:grid-cols-[272px_1fr] min-h-screen">
         {/* Sidebar */}
         <aside className="hidden lg:flex flex-col bg-cs-dark h-[calc(100vh-68px)] sticky top-[68px] overflow-y-auto scrollbar-thin">
           {/* Search */}
@@ -306,7 +306,7 @@ export default function DocsClient() {
         {/* Content */}
         <div className="bg-white min-h-[calc(100vh-68px)] overflow-y-auto" ref={contentRef}>
           {/* Topbar */}
-          <div className="flex items-center justify-between px-6 lg:px-[52px] py-4 bg-white/95 border-b border-cs-border sticky top-[68px] z-[100] backdrop-blur-xl flex-wrap gap-4">
+          <div className="flex items-center justify-between px-4 sm:px-6 md:px-10 lg:px-[52px] py-4 bg-white/95 border-b border-cs-border sticky top-[68px] z-[100] backdrop-blur-xl flex-wrap gap-3 sm:gap-4">
             <span className="text-[13px] text-cs-ink3 font-mono">
               API Reference{" "}
               <span className="text-cs-ink4 mx-1">/</span>{" "}
@@ -316,20 +316,48 @@ export default function DocsClient() {
                   .find((i) => i.id === active)?.text ?? "Introduction"}
               </span>
             </span>
-            <div className="flex items-center gap-2.5">
+            <div className="flex items-center gap-2.5 flex-wrap sm:flex-nowrap w-full sm:w-auto">
               <select className="text-xs font-mono bg-cs-paper border-[1.5px] border-cs-border rounded-[7px] px-2.5 py-1.5 text-cs-ink2 outline-none">
                 <option>Production</option>
                 <option>Sandbox</option>
               </select>
               <input
-                className="text-xs font-mono bg-cs-paper border-[1.5px] border-cs-border rounded-[7px] px-3 py-1.5 text-cs-ink2 w-[200px] outline-none focus:border-cs-green transition"
+                className="text-xs font-mono bg-cs-paper border-[1.5px] border-cs-border rounded-[7px] px-3 py-1.5 text-cs-ink2 flex-1 sm:flex-none sm:w-[200px] outline-none focus:border-cs-green transition"
                 placeholder="cs_live_your_api_key…"
               />
             </div>
           </div>
 
+          {/* Mobile section picker — sidebar is desktop-only, so expose nav here */}
+          <div className="lg:hidden px-4 sm:px-6 pt-4 bg-white border-b border-cs-border">
+            <label htmlFor="docs-section-picker" className="sr-only">
+              Jump to section
+            </label>
+            <div className="relative">
+              <select
+                id="docs-section-picker"
+                value={active}
+                onChange={(e) => scrollTo(e.target.value)}
+                className="w-full appearance-none bg-cs-paper border-[1.5px] border-cs-border rounded-[9px] px-3.5 py-2.5 pr-9 text-[13px] font-semibold text-cs-ink outline-none focus:border-cs-green transition mb-4"
+              >
+                {sidebarGroups.map((g) => (
+                  <optgroup key={g.label} label={g.label}>
+                    {g.items.map((i) => (
+                      <option key={i.id} value={i.id}>
+                        {i.method ? `${i.method} · ${i.text}` : i.text}
+                      </option>
+                    ))}
+                  </optgroup>
+                ))}
+              </select>
+              <span className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-[calc(50%+8px)] text-cs-ink3 text-sm">
+                ▾
+              </span>
+            </div>
+          </div>
+
           {/* Scrollable content */}
-          <div className="px-6 lg:px-[52px] py-[52px] pb-20">
+          <div className="px-4 sm:px-6 md:px-10 lg:px-[52px] py-10 sm:py-12 lg:py-[52px] pb-16 sm:pb-20">
             {/* Intro */}
             <section className="docs-sec mb-16 scroll-mt-[136px]" id="d-intro">
               <p className="inline-flex items-center gap-1.5 text-[11px] font-bold text-cs-green-d uppercase tracking-[.1em] mb-3 before:content-[''] before:w-3.5 before:h-0.5 before:bg-cs-green before:rounded-sm">

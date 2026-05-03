@@ -34,9 +34,12 @@ const footerCols = [
 
 export default function Footer() {
   return (
-    <footer className="bg-cs-dark pt-16 pb-9 px-6 lg:px-14">
+    <footer
+      aria-label="Site footer"
+      className="bg-cs-dark pt-12 sm:pt-16 pb-9 px-4 sm:px-6 lg:px-14"
+    >
       <div className="mx-auto max-w-[1200px]">
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[2.2fr_1fr_1fr_1fr] gap-12 pb-12 border-b border-white/[.07] mb-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-[2fr_1fr_1fr_1fr] lg:grid-cols-[2.2fr_1fr_1fr_1fr] gap-8 md:gap-10 lg:gap-12 pb-10 sm:pb-12 border-b border-white/[.07] mb-8">
           {/* Brand */}
           <div>
             <div className="flex items-center gap-2 text-xl font-extrabold text-white mb-3.5">
@@ -46,8 +49,9 @@ export default function Footer() {
               </span>
             </div>
             <p className="text-[13px] text-white/[.38] leading-[1.75] max-w-[260px] mb-5">
-              The first on-chain credit scoring infrastructure for DeFi. Built
-              for protocols. Trusted by users. Verified by the chain.
+              The first crypto credit score infrastructure for DeFi — an
+              on-chain cryptocurrency credit score built for protocols, trusted
+              by users, and verified by the chain.
             </p>
             <div className="flex gap-2">
               {["𝕏", "💬", "⌥", "in"].map((icon) => (

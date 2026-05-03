@@ -12,6 +12,14 @@ html {
   /* Firefox: thinner scrollbar with themed thumb */
   scrollbar-width: thin;
   scrollbar-color: rgba(17, 17, 17, 0.22) transparent;
+  /* Prevent iOS Safari from auto-zooming form fields and ensure consistent sizing across phones */
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+@media (max-width: 640px) {
+  html {
+    scroll-padding-top: 72px;
+  }
 }
 body {
   margin: 0;
@@ -110,6 +118,10 @@ html:has(main[data-page="dashboard"]) body {
 }
 @media (max-width: 900px) {
   .hiw-timeline::before { left: 20px; }
+}
+@media (max-width: 640px) {
+  /* Drop the vertical spine on mobile — with a single stacked column it has nothing to anchor. */
+  .hiw-timeline::before { display: none; }
 }
 
 /* ═══ CODE BLOCKS ═══ */
