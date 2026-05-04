@@ -16,8 +16,9 @@ export default function OpengraphImage() {
           display: "flex",
           flexDirection: "column",
           padding: "72px 80px",
-          background:
-            "radial-gradient(ellipse at 20% 20%, rgba(0,201,141,0.18) 0%, transparent 55%), radial-gradient(ellipse at 80% 80%, rgba(0,201,141,0.08) 0%, transparent 55%), #0b1a12",
+          backgroundColor: "#0b1a12",
+          backgroundImage:
+            "radial-gradient(ellipse at 20% 20%, rgba(0,201,141,0.18) 0%, transparent 55%), radial-gradient(ellipse at 80% 80%, rgba(0,201,141,0.08) 0%, transparent 55%)",
           fontFamily: "'Inter', sans-serif",
           color: "#ffffff",
         }}
