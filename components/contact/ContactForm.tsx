@@ -2,63 +2,62 @@
 
 import { useState } from "react";
 
+const SUPPORT_EMAIL = "support@zentrascore.com";
+
 export default function ContactForm() {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [subject, setSubject] = useState("");
   const [message, setMessage] = useState("");
   const [company, setCompany] = useState("");
-  const [status, setStatus] = useState<"idle" | "loading" | "success" | "error">(
-    "idle"
-  );
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [status, setStatus] = useState<"idle" | "success">("idle");
 
-  async function onSubmit(e: React.FormEvent) {
+  function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    setStatus("loading");
-    setErrorMsg(null);
-    try {
-      const res = await fetch("/api/contact", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          name,
-          email,
-          subject,
-          message,
-          company,
-        }),
-      });
-      const data = await res.json().catch(() => ({}));
-      if (!res.ok) {
-        setStatus("error");
-        setErrorMsg(
-          typeof data.error === "string" ? data.error : "Something went wrong."
-        );
-        return;
-      }
-      if (typeof data.mailtoUrl === "string" && data.mailtoUrl.length > 0) {
-        window.location.href = data.mailtoUrl;
-      }
+
+    if (company.trim().length > 0) {
       setStatus("success");
-      setName("");
-      setEmail("");
-      setSubject("");
-      setMessage("");
-      setCompany("");
-    } catch {
-      setStatus("error");
-      setErrorMsg("Network error. Please try again.");
+      return;
     }
+
+    const fullSubject = `[Contact] ${subject}`;
+    const body = [
+      `Name: ${name}`,
+      `Email: ${email}`,
+      "",
+      message,
+    ].join("\n");
+
+    const mailtoUrl = `mailto:${SUPPORT_EMAIL}?${new URLSearchParams({
+      subject: fullSubject,
+      body,
+    }).toString()}`;
+
+    window.location.href = mailtoUrl;
+
+    setStatus("success");
+    setName("");
+    setEmail("");
+    setSubject("");
+    setMessage("");
+    setCompany("");
   }
 
   if (status === "success") {
     return (
       <div className="bg-white border-[1.5px] border-cs-border rounded-[16px] p-8 lg:p-10 text-center">
-        <p className="text-[15px] font-semibold text-cs-ink mb-2">Message sent</p>
+        <p className="text-[15px] font-semibold text-cs-ink mb-2">
+          Opening your email app…
+        </p>
         <p className="text-sm text-cs-ink3 leading-relaxed mb-6">
-          Thanks — we&apos;ll get back to you at the email you provided as soon as
-          we can.
+          Your message to{" "}
+          <a
+            href={`mailto:${SUPPORT_EMAIL}`}
+            className="font-semibold text-cs-green-d hover:underline"
+          >
+            {SUPPORT_EMAIL}
+          </a>{" "}
+          has been prepared. Please review and hit send in your email client.
         </p>
         <button
           type="button"
@@ -174,16 +173,11 @@ export default function ContactForm() {
           />
         </div>
 
-        {errorMsg && (
-          <p className="text-sm text-red-600 font-medium">{errorMsg}</p>
-        )}
-
         <button
           type="submit"
-          disabled={status === "loading"}
-          className="mt-2 text-[15px] font-bold px-8 py-3.5 rounded-cs border-none bg-cs-green text-white transition hover:bg-cs-green-d hover:-translate-y-px hover:shadow-[0_8px_28px_rgba(0,201,141,.35)] disabled:opacity-60 disabled:cursor-not-allowed disabled:hover:translate-y-0"
+          className="mt-2 text-[15px] font-bold px-8 py-3.5 rounded-cs border-none bg-cs-green text-white transition hover:bg-cs-green-d hover:-translate-y-px hover:shadow-[0_8px_28px_rgba(0,201,141,.35)]"
         >
-          {status === "loading" ? "Sending…" : "Send message"}
+          Send message
         </button>
       </div>
     </form>
