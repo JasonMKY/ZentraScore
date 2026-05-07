@@ -22,6 +22,7 @@ export default authMiddleware({
     "/pricing(.*)",
     "/docs(.*)",
     "/contact(.*)",
+    "/api/contact(.*)",
     "/api/oracle",
     "/api/score(.*)",
     "/api/me(.*)",
