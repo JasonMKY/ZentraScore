@@ -26,8 +26,8 @@ const footerCols = [
     links: [
       { label: "About", href: "#" },
       { label: "Contact", href: "/contact" },
-      { label: "Privacy", href: "#" },
-      { label: "Terms", href: "#" },
+      { label: "Privacy", href: "/privacy" },
+      { label: "Terms", href: "/terms" },
     ],
   },
 ];
@@ -93,13 +93,13 @@ export default function Footer() {
           </span>
           <div className="flex gap-5">
             <Link
-              href="#"
+              href="/terms"
               className="text-xs text-white/[.22] hover:text-white/60 transition"
             >
               Terms &amp; Service
             </Link>
             <Link
-              href="#"
+              href="/privacy"
               className="text-xs text-white/[.22] hover:text-white/60 transition"
             >
               Privacy Policy

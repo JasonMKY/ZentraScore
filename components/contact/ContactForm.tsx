@@ -44,6 +44,9 @@ export default function ContactForm() {
       setSubject("");
       setMessage("");
       setCompany("");
+      if (typeof window !== "undefined") {
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      }
     } catch {
       setStatus("error");
       setErrorMsg("Network error. Please try again.");
