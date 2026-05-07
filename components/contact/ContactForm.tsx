@@ -37,6 +37,9 @@ export default function ContactForm() {
         );
         return;
       }
+      if (typeof data.mailtoUrl === "string" && data.mailtoUrl.length > 0) {
+        window.location.href = data.mailtoUrl;
+      }
       setStatus("success");
       setName("");
       setEmail("");

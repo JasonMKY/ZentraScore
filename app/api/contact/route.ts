@@ -13,6 +13,26 @@ const bodySchema = z.object({
   company: z.string().optional(),
 });
 
+function buildMailtoUrl(params: {
+  name: string;
+  email: string;
+  subject: string;
+  message: string;
+}) {
+  const fullSubject = `[Contact] ${params.subject}`;
+  const body = [
+    `Name: ${params.name}`,
+    `Email: ${params.email}`,
+    "",
+    params.message,
+  ].join("\n");
+  const q = new URLSearchParams({
+    subject: fullSubject,
+    body,
+  });
+  return `mailto:support@zentrascore.com?${q.toString()}`;
+}
+
 export async function POST(req: Request) {
   let json: unknown;
   try {
@@ -39,10 +59,11 @@ export async function POST(req: Request) {
   if (!result.ok && result.reason === "not_configured") {
     return NextResponse.json(
       {
-        error:
-          "Contact email is not configured. Set RESEND_API_KEY or SMTP_* in your environment.",
+        ok: true,
+        fallback: "mailto",
+        mailtoUrl: buildMailtoUrl({ name, email, subject, message }),
       },
-      { status: 503 }
+      { status: 200 }
     );
   }
 
@@ -50,10 +71,11 @@ export async function POST(req: Request) {
     console.error("[contact] send failed:", result.detail);
     return NextResponse.json(
       {
-        error:
-          "Could not send your message. Please try again later or email support directly.",
+        ok: true,
+        fallback: "mailto",
+        mailtoUrl: buildMailtoUrl({ name, email, subject, message }),
       },
-      { status: 502 }
+      { status: 200 }
     );
   }
 
